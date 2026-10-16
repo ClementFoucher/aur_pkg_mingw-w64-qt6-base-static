@@ -21,18 +21,13 @@ license=(GPL-3.0-only
          LicenseRef-Qt-Commercial
          Qt-GPL-exception-1.0)
 pkgdesc='A cross-platform application and UI framework (mingw-w64)'
-depends=('mingw-w64-crt' 'mingw-w64-cppwinrt' 'mingw-w64-zlib' 'mingw-w64-libjpeg-turbo' 'mingw-w64-sqlite'
-         'mingw-w64-libpng' 'mingw-w64-openssl' 'mingw-w64-dbus' 'mingw-w64-harfbuzz'
-         'mingw-w64-brotli' 'mingw-w64-pcre2' 'mingw-w64-zstd')
+depends=('mingw-w64-crt' 'mingw-w64-cppwinrt' 'mingw-w64-zlib' 'mingw-w64-libjpeg-turbo'
+         'mingw-w64-openssl' 'mingw-w64-dbus'
+         'mingw-w64-brotli' 'mingw-w64-zstd')
 makedepends=('qt6-base' 'ninja' 'mingw-w64-cmake-static'
-             'mingw-w64-vulkan-headers' 'mingw-w64-vulkan-icd-loader' 'mingw-w64-pkg-config')
+             'mingw-w64-pkg-config')
 optdepends=('qt6-base: development tools')
 options=('!strip' '!buildflags' 'staticlibs' '!emptydirs')
-if ! [[ $pkgname =~ .*-clang-.* ]]; then
-  makedepends+=('mingw-w64-postgresql' 'mingw-w64-mariadb-connector-c')
-  optdepends+=('mingw-w64-postgresql: PostgreSQL driver'
-               'mingw-w64-mariadb-connector-c: MariaDB driver')
-fi
 groups=(mingw-w64-qt6)
 _pkgfqn="qtbase-everywhere-src-${_qtver}"
 source=("https://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/submodules/${_pkgfqn}.tar.xz"
@@ -127,17 +122,15 @@ build() {
       -DFEATURE_cxx20=ON \
       -DFEATURE_cpp_winrt=$_enable_winrt_support \
       -DFEATURE_pkg_config=ON \
-      -DFEATURE_system_pcre2=ON \
-      -DFEATURE_system_freetype=ON \
-      -DFEATURE_system_harfbuzz=ON \
-      -DFEATURE_system_sqlite=ON \
+      -DFEATURE_force_bundled_libs=ON \
       -DINSTALL_BINDIR=lib/qt6/bin \
       -DINSTALL_DOCDIR=share/doc/qt6 \
       -DINSTALL_ARCHDATADIR=lib/qt6 \
       -DINSTALL_DATADIR=share/qt6 \
       -DINSTALL_INCLUDEDIR=include/qt6 \
       -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs \
-      -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples \
+      -DQT_BUILD_EXAMPLES=OFF \
+      -DQT_BUILD_TESTS=OFF \
       -DQT_NO_PACKAGE_VERSION_CHECK:BOOL=TRUE \
       -DINPUT_openssl=linked \
       "${additional_flags[@]}"
